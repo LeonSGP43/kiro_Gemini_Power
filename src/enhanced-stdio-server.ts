@@ -2,6 +2,8 @@
 import { GoogleGenAI } from '@google/genai';
 import { createInterface } from 'readline';
 import { MCPRequest, MCPResponse } from './types.js';
+import { translateError, formatSuccessMessage, SYSTEM_PROMPTS } from './i18n.js';
+import { normalizeWindowsPath, isWindows, readFileSafe } from './windows-utils.js';
 
 // Increase max buffer size for large images (10MB)
 if (process.stdin.setEncoding) {
@@ -175,12 +177,17 @@ class EnhancedStdioMCPServer {
 
       this.sendResponse(response);
     } catch (error) {
+      // 翻译错误信息为中文（如果是中文环境）
+      const originalMessage = error instanceof Error ? error.message : 'Internal error';
+      const translatedMessage = translateError(error);
+
       const errorResponse: MCPResponse = {
         jsonrpc: '2.0',
         id: request.id,
         error: {
           code: -32603,
-          message: error instanceof Error ? error.message : 'Internal error'
+          message: translatedMessage,
+          data: { originalMessage } // 保留原始英文错误信息用于调试
         }
       };
       this.sendResponse(errorResponse);
@@ -539,10 +546,19 @@ class EnhancedStdioMCPServer {
       };
 
       // Add system instruction if provided
-      if (args.systemInstruction) {
+      let systemInstructionText = args.systemInstruction || '';
+
+      // 如果在 Windows 平台且用户环境是中文，添加中文优化提示
+      if (isWindows() && !systemInstructionText.includes('Windows')) {
+        systemInstructionText = systemInstructionText
+          ? `${systemInstructionText}\n\n${SYSTEM_PROMPTS.CHINESE_OPTIMIZATION}`
+          : SYSTEM_PROMPTS.CHINESE_OPTIMIZATION;
+      }
+
+      if (systemInstructionText) {
         requestBody.systemInstruction = {
           parts: [{
-            text: args.systemInstruction
+            text: systemInstructionText
           }]
         };
       }

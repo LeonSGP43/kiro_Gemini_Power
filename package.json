@@ -1,7 +1,7 @@
 {
   "name": "mcp-server-gemini",
-  "version": "4.2.2",
-  "description": "State-of-the-art MCP server for Google Gemini API with all latest features",
+  "version": "4.2.2-lkbaba.1",
+  "description": "LKbaba's customized Gemini MCP - Optimized for Chinese users and Windows platform",
   "main": "dist/enhanced-stdio-server.js",
   "bin": {
     "mcp-server-gemini": "./dist/enhanced-stdio-server.js"
@@ -43,16 +43,16 @@
     "windsurf",
     "typescript"
   ],
-  "author": "Ali Argun",
+  "author": "LKbaba (forked from Ali Argun)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aliargun/mcp-server-gemini.git"
+    "url": "git+https://github.com/LKbaba/Gemini-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/aliargun/mcp-server-gemini/issues"
+    "url": "https://github.com/LKbaba/Gemini-mcp/issues"
   },
-  "homepage": "https://github.com/aliargun/mcp-server-gemini#readme",
+  "homepage": "https://github.com/LKbaba/Gemini-mcp#readme",
   "engines": {
     "node": ">=16.0.0"
   },
