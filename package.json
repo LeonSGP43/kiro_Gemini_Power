@@ -1,16 +1,16 @@
 {
   "name": "mcp-server-gemini",
-  "version": "4.2.2-lkbaba.1",
-  "description": "LKbaba's customized Gemini MCP - Optimized for Chinese users and Windows platform",
-  "main": "dist/enhanced-stdio-server.js",
+  "version": "1.0.1",
+  "description": "Specialized MCP server for Gemini 3.0 Pro focused on UI generation and frontend development",
+  "main": "dist/server.js",
   "bin": {
-    "mcp-server-gemini": "./dist/enhanced-stdio-server.js"
+    "mcp-server-gemini": "./dist/server.js"
   },
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
-    "start": "node dist/enhanced-stdio-server.js",
-    "dev": "ts-node src/enhanced-stdio-server.ts",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.ts",
@@ -18,7 +18,8 @@
   },
   "type": "module",
   "dependencies": {
-    "@google/genai": "^1.8.0"
+    "@google/genai": "^1.8.0",
+    "undici": "^7.16.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
@@ -43,7 +44,7 @@
     "windsurf",
     "typescript"
   ],
-  "author": "LKbaba (forked from Ali Argun)",
+  "author": "LKbaba (based on aliargun/mcp-server-gemini)",
   "license": "MIT",
   "repository": {
     "type": "git",
