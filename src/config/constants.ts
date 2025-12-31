@@ -31,6 +31,7 @@ export const TOOL_NAMES = {
   ANALYZE_CONTENT: 'gemini_analyze_content',
   ANALYZE_CODEBASE: 'gemini_analyze_codebase',
   BRAINSTORM: 'gemini_brainstorm',
+  SEARCH: 'gemini_search',
   LIST_MODELS: 'list_models'
 } as const;
 

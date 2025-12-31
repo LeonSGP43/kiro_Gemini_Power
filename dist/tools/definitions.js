@@ -335,7 +335,32 @@ export const TOOL_DEFINITIONS = [
             required: ['topic']
         }
     },
-    // 📋 Tool 8: list_models
+    // 🔍 Tool 8: gemini_search
+    {
+        name: TOOL_NAMES.SEARCH,
+        description: 'Search the web using Gemini\'s built-in Google Search grounding. Returns up-to-date information with source citations. Ideal for current events, latest documentation, real-time data, and fact-checking.',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                query: {
+                    type: 'string',
+                    description: 'Search query or question to answer using web search'
+                },
+                context: {
+                    type: 'string',
+                    description: 'Optional: Additional context to help refine the search'
+                },
+                thinkingLevel: {
+                    type: 'string',
+                    enum: ['NONE', 'LOW', 'MEDIUM', 'HIGH'],
+                    description: 'Thinking depth for complex queries (default: HIGH)',
+                    default: 'HIGH'
+                }
+            },
+            required: ['query']
+        }
+    },
+    // 📋 Tool 9: list_models
     {
         name: TOOL_NAMES.LIST_MODELS,
         description: 'List all available Gemini models with their capabilities, context windows, and use cases.',
