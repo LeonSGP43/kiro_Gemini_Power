@@ -3,6 +3,7 @@
  * Identify and fix UI issues from screenshots
  * Priority: P0 - Core functionality
  */
+import { GoogleGenAI } from '@google/genai';
 import { validateRequired, validateString } from '../utils/validators.js';
 import { handleAPIError, logError } from '../utils/error-handler.js';
 import { readFile, readFiles } from '../utils/file-reader.js';
@@ -135,11 +136,45 @@ Format your response as JSON with this structure:
                 images.push(params.targetState);
             }
         }
-        const response = await client.generateMultimodal(prompt, images, {
-            systemInstruction: UI_FIX_SYSTEM_PROMPT,
-            temperature: 0.5,
-            maxTokens: 6144
-        });
+        // Determine thinking level (default HIGH for complex debugging)
+        const thinkingLevel = params.thinkingLevel || 'HIGH';
+        let response;
+        if (thinkingLevel !== 'NONE') {
+            // Use thinking mode with direct GoogleGenAI call
+            const apiKey = process.env.GEMINI_API_KEY;
+            if (!apiKey) {
+                throw new Error('GEMINI_API_KEY environment variable is not set');
+            }
+            const ai = new GoogleGenAI({ apiKey });
+            // Convert images to inline data format
+            const imageParts = await Promise.all(images.map(async (img) => {
+                const { convertImageToInlineData } = await import('../utils/gemini-client.js');
+                const { mimeType, data } = convertImageToInlineData(img);
+                return { inlineData: { mimeType, data } };
+            }));
+            const config = {
+                thinkingConfig: { thinkingLevel },
+                systemInstruction: UI_FIX_SYSTEM_PROMPT,
+            };
+            const contents = [{
+                    role: 'user',
+                    parts: [{ text: prompt }, ...imageParts]
+                }];
+            const result = await ai.models.generateContent({
+                model: 'gemini-3-pro-preview',
+                config,
+                contents,
+            });
+            response = result.text || '';
+        }
+        else {
+            // Use standard client without thinking
+            response = await client.generateMultimodal(prompt, images, {
+                systemInstruction: UI_FIX_SYSTEM_PROMPT,
+                temperature: 0.5,
+                maxTokens: 6144
+            });
+        }
         // Try to parse as JSON
         try {
             const result = JSON.parse(response);

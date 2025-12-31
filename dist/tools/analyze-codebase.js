@@ -9,6 +9,7 @@
  * - Added include/exclude parameters: Support glob pattern filtering
  * - Retained files parameter: Backward compatible with original usage
  */
+import { GoogleGenAI } from '@google/genai';
 import { validateRequired, validateArray } from '../utils/validators.js';
 import { handleAPIError, logError } from '../utils/error-handler.js';
 import { readDirectory, readFiles } from '../utils/file-reader.js';
@@ -303,13 +304,40 @@ export async function handleAnalyzeCodebase(params, client) {
             files: filesToAnalyze
         };
         const prompt = buildCodebasePrompt(promptParams, metrics, outputFormat);
-        // Call Gemini API (using default model gemini-3-pro-preview)
-        // Deep Think mode uses higher temperature for deeper analysis
-        const response = await client.generate(prompt, {
-            systemInstruction: CODEBASE_ANALYSIS_SYSTEM_PROMPT,
-            temperature: deepThink ? 0.7 : 0.5,
-            maxTokens: 16384 // Larger output token limit
-        });
+        // Determine thinking level (default HIGH for complex analysis)
+        const thinkingLevel = params.thinkingLevel || 'HIGH';
+        let response;
+        if (thinkingLevel !== 'NONE') {
+            // Use thinking mode with direct GoogleGenAI call
+            const apiKey = process.env.GEMINI_API_KEY;
+            if (!apiKey) {
+                throw new Error('GEMINI_API_KEY environment variable is not set');
+            }
+            const ai = new GoogleGenAI({ apiKey });
+            const config = {
+                thinkingConfig: { thinkingLevel },
+                systemInstruction: CODEBASE_ANALYSIS_SYSTEM_PROMPT,
+            };
+            const contents = [{
+                    role: 'user',
+                    parts: [{ text: prompt }]
+                }];
+            const result = await ai.models.generateContent({
+                model: 'gemini-3-pro-preview',
+                config,
+                contents,
+            });
+            response = result.text || '';
+        }
+        else {
+            // Use standard client without thinking
+            // Deep Think mode uses higher temperature for deeper analysis
+            response = await client.generate(prompt, {
+                systemInstruction: CODEBASE_ANALYSIS_SYSTEM_PROMPT,
+                temperature: deepThink ? 0.7 : 0.5,
+                maxTokens: 16384 // Larger output token limit
+            });
+        }
         // ===== 5. Build return result =====
         const result = {
             summary: '',

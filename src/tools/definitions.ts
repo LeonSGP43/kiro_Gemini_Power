@@ -146,6 +146,12 @@ export const TOOL_DEFINITIONS = [
         targetState: {
           type: 'string',
           description: 'Optional: Expected state description or reference image'
+        },
+        thinkingLevel: {
+          type: 'string',
+          enum: ['NONE', 'LOW', 'MEDIUM', 'HIGH'],
+          description: 'Thinking depth for complex debugging (default: HIGH). HIGH recommended for complex UI issues.',
+          default: 'HIGH'
         }
       },
       required: ['screenshot']
@@ -291,6 +297,12 @@ export const TOOL_DEFINITIONS = [
           type: 'boolean',
           description: 'Enable Deep Think mode for complex analysis (default: false)',
           default: false
+        },
+        thinkingLevel: {
+          type: 'string',
+          enum: ['NONE', 'LOW', 'MEDIUM', 'HIGH'],
+          description: 'Thinking depth for complex analysis (default: HIGH). HIGH recommended for architecture and security analysis.',
+          default: 'HIGH'
         },
         outputFormat: {
           type: 'string',
