@@ -6,9 +6,10 @@
 
 A specialized MCP (Model Context Protocol) server focused on **UI generation and frontend development** using Google's latest Gemini 3.0 Pro model. Designed to complement Claude Code by handling what Gemini does best.
 
-🚀 **Works with**: Claude Desktop, Claude Code, Cursor, Windsurf, and any MCP-compatible client
+🚀 **Works with**: Claude Desktop, Claude Code, Cursor, Windsurf, Kiro, and any MCP-compatible client
 🎯 **Specialization**: UI generation, design-to-code, interactive animations, visual debugging
 ⚡ **Powered by**: Gemini 3.0 Pro (#1 on WebDev Arena for UI generation)
+🎯 **NEW**: Kiro Power support with controlled advisory tools
 
 ## Why This Server?
 
@@ -23,7 +24,9 @@ Claude Code excels at code planning, architecture design, and code review. But f
 
 ## Features
 
-### 8 Specialized Tools
+### 12 Specialized Tools (9 Creative + 3 Controlled Power)
+
+#### Creative Tools (Original)
 
 | Tool | Description | Priority |
 |------|-------------|----------|
@@ -34,7 +37,57 @@ Claude Code excels at code planning, architecture design, and code review. But f
 | `gemini_analyze_content` | Analyze code, documents, or data (supports file path) | 🟡 P1 |
 | `gemini_analyze_codebase` | Analyze entire codebase (supports directory path) | 🟡 P1 |
 | `gemini_brainstorm` | Generate creative ideas with project context | 🟢 P2 |
+| `gemini_search` | Web search with Google Search grounding | 🟢 P2 |
 | `list_models` | List available Gemini models with capabilities | 🟢 P2 |
+
+#### 🆕 Controlled Power Tools (v1.2.0)
+
+| Tool | Role | Constraints |
+|------|------|-------------|
+| `gemini_research_advisor` | Research Assistant - Extract concepts, provide references | ❌ No decisions, ❌ No recommendations |
+| `gemini_devils_advocate` | Critic - Find risks, gaps, hidden assumptions | ❌ No solutions, ❌ No alternatives |
+| `gemini_consistency_check` | Validator - Check goal/constraint/proposal alignment | ❌ No fixes, ❌ No suggestions |
+
+**Why Controlled Tools?**
+- **Minimal context pollution**: Structured JSON output with token budgets
+- **No decision drift**: Tools stay in their lane (research OR critique OR validate)
+- **Predictable outputs**: Perfect for automated workflows and CI/CD integration
+
+### v1.2.0 New Features - Controlled Power Tools
+
+Three new "controlled" tools designed for engineering collaboration:
+
+#### Research Advisor
+```json
+{
+  "question": "What are the key patterns for React Server Components?",
+  "materialPaths": ["./docs/rsc-spec.md"],
+  "maxOutputTokens": 800
+}
+```
+Returns: `key_concepts`, `recommended_directions`, `open_questions`, `best_practices`, `citations_or_keywords`
+
+#### Devil's Advocate
+```json
+{
+  "proposal": "We will use microservices with 5 services...",
+  "goal": "Improve scalability",
+  "constraints": "Team of 4, 6-month deadline",
+  "maxOutputTokens": 600
+}
+```
+Returns: `critical_risks`, `hidden_assumptions`, `missing_considerations`, `questions_to_answer`
+
+#### Consistency Check
+```json
+{
+  "goal": "Implement OAuth2 with Google and GitHub",
+  "constraints": "Must work with existing sessions",
+  "proposal": "Implemented Google OAuth only...",
+  "acceptanceCriteria": "Users can sign in with Google or GitHub"
+}
+```
+Returns: `conflicts_found`, `conflicts`, `requirements_not_covered`, `validation_gaps`
 
 ### v1.1.0 New Features
 
@@ -89,6 +142,62 @@ Or auto-detect from `package.json`:
 | `gemini-2.5-pro` | 1M tokens | General coding, fallback | ❌ No |
 | `gemini-2.5-flash` | 1M tokens | High-frequency tasks, cost optimization | ❌ No |
 | `gemini-2.5-flash-lite` | 1M tokens | Simple queries, maximum cost savings | ❌ No |
+
+## Kiro Power Installation
+
+This server can be installed as a **Kiro Power** for enhanced integration:
+
+### Option 1: Local Installation (Development)
+
+1. Clone and build the project:
+```bash
+git clone https://github.com/LeonSGP43/Gemini-mcp.git
+cd Gemini-mcp
+npm install && npm run build
+```
+
+2. Copy the power folder to your Kiro powers directory:
+```bash
+cp -r .kiro/powers/gemini-assistant ~/.kiro/powers/
+```
+
+3. Update the mcp.json path to point to your local build:
+```json
+{
+  "mcpServers": {
+    "gemini-assistant": {
+      "command": "node",
+      "args": ["/path/to/Gemini-mcp/dist/server.js"],
+      "env": {
+        "GEMINI_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+### Option 2: NPX Installation (Recommended)
+
+Create `.kiro/powers/gemini-assistant/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "gemini-assistant": {
+      "command": "npx",
+      "args": ["-y", "github:LeonSGP43/Gemini-mcp"],
+      "env": {
+        "GEMINI_API_KEY": "your_api_key_here"
+      },
+      "autoApprove": [
+        "list_models",
+        "gemini_research_advisor",
+        "gemini_devils_advocate",
+        "gemini_consistency_check"
+      ]
+    }
+  }
+}
+```
 
 ## Quick Start
 
@@ -249,15 +358,26 @@ src/
 │   ├── analyze-content.ts   # 内容分析（支持文件路径）
 │   ├── analyze-codebase.ts  # 代码库分析（支持目录路径）
 │   ├── brainstorm.ts    # 头脑风暴（支持项目上下文）
-│   └── list-models.ts   # 模型列表（结构化输出）
+│   ├── search.ts        # 网络搜索（Google Search grounding）
+│   ├── list-models.ts   # 模型列表（结构化输出）
+│   ├── research-advisor.ts   # 🆕 资料顾问 Power
+│   ├── devils-advocate.ts    # 🆕 反对者 Power
+│   └── consistency-check.ts  # 🆕 一致性检查 Power
 ├── utils/
 │   ├── gemini-client.ts # Gemini API 客户端
 │   ├── error-handler.ts # 错误处理
 │   ├── validators.ts    # 参数验证
-│   ├── security.ts      # 安全验证模块（新增）
-│   └── file-reader.ts   # 文件读取工具（新增）
+│   ├── security.ts      # 安全验证模块
+│   └── file-reader.ts   # 文件读取工具
 ├── types.ts             # 类型定义
 └── server.ts            # 主服务器
+
+.kiro/powers/gemini-assistant/   # 🆕 Kiro Power 配置
+├── POWER.md             # Power 文档
+├── mcp.json             # MCP 服务器配置
+└── steering/
+    ├── workflows.md     # 工作流指南
+    └── power-tools-guide.md  # Power 工具深度指南
 ```
 
 ## Credits

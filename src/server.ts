@@ -23,7 +23,11 @@ import {
   handleAnalyzeCodebase,
   handleBrainstorm,
   handleSearch,
-  handleListModels
+  handleListModels,
+  // 新增：受控 Power 工具
+  handleResearchAdvisor,
+  handleDevilsAdvocate,
+  handleConsistencyCheck
 } from './tools/index.js';
 
 // Setup proxy for Node.js fetch (required for users behind proxy/VPN)
@@ -175,6 +179,19 @@ async function handleToolsCall(request: MCPRequest): Promise<void> {
 
       case TOOL_NAMES.SEARCH:
         result = await handleSearch(args, process.env.GEMINI_API_KEY!);
+        break;
+
+      // === 新增：受控 Power 工具路由 ===
+      case TOOL_NAMES.RESEARCH_ADVISOR:
+        result = await handleResearchAdvisor(args, geminiClient);
+        break;
+
+      case TOOL_NAMES.DEVILS_ADVOCATE:
+        result = await handleDevilsAdvocate(args, geminiClient);
+        break;
+
+      case TOOL_NAMES.CONSISTENCY_CHECK:
+        result = await handleConsistencyCheck(args, geminiClient);
         break;
 
       default:

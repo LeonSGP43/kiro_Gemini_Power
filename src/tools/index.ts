@@ -3,7 +3,7 @@
  * 所有 MCP 工具的统一入口
  */
 
-// 导出工具处理器
+// === 原有工具处理器 ===
 export { handleGenerateUI } from './generate-ui.js';
 export { handleMultimodalQuery } from './multimodal-query.js';
 export { handleFixUI } from './fix-ui.js';
@@ -13,6 +13,11 @@ export { handleAnalyzeCodebase } from './analyze-codebase.js';
 export { handleBrainstorm } from './brainstorm.js';
 export { handleSearch } from './search.js';
 export { handleListModels } from './list-models.js';
+
+// === 新增：受控 Power 工具处理器 ===
+export { handleResearchAdvisor } from './research-advisor.js';
+export { handleDevilsAdvocate } from './devils-advocate.js';
+export { handleConsistencyCheck } from './consistency-check.js';
 
 // 导出工具定义
 export { TOOL_DEFINITIONS } from './definitions.js';

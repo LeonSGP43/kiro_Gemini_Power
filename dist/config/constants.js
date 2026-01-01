@@ -28,7 +28,11 @@ export const TOOL_NAMES = {
     ANALYZE_CODEBASE: 'gemini_analyze_codebase',
     BRAINSTORM: 'gemini_brainstorm',
     SEARCH: 'gemini_search',
-    LIST_MODELS: 'list_models'
+    LIST_MODELS: 'list_models',
+    // === 新增：受控 Power 工具 ===
+    RESEARCH_ADVISOR: 'gemini_research_advisor',
+    DEVILS_ADVOCATE: 'gemini_devils_advocate',
+    CONSISTENCY_CHECK: 'gemini_consistency_check'
 };
 // Error codes
 export const ERROR_CODES = {

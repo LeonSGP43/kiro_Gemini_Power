@@ -381,6 +381,113 @@ export const TOOL_DEFINITIONS = [
             properties: {},
             required: []
         }
+    },
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 🎯 受控 Power 工具 - 专为工程协作设计
+    // 这些工具输出结构化、受控，不会污染主上下文
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 📚 Tool 10: gemini_research_advisor
+    {
+        name: TOOL_NAMES.RESEARCH_ADVISOR,
+        description: 'Research Advisor Power - Read documentation, extract key concepts, and provide reference suggestions. ONLY provides information and directions, NEVER makes decisions or recommendations. Output is structured and token-controlled for minimal context pollution.',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                question: {
+                    type: 'string',
+                    description: 'The research question or topic to investigate'
+                },
+                materials: {
+                    type: 'string',
+                    description: 'Optional: Direct content of materials to analyze (documentation, code, etc.)'
+                },
+                materialPaths: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'Optional: File paths to read as research materials (e.g., ["./docs/api.md", "./README.md"])'
+                },
+                context: {
+                    type: 'string',
+                    description: 'Optional: Additional context about the research goal'
+                },
+                maxOutputTokens: {
+                    type: 'number',
+                    description: 'Token budget for output (default: 800, range: 200-2000). Lower = less context pollution.',
+                    default: 800
+                }
+            },
+            required: ['question']
+        }
+    },
+    // 😈 Tool 11: gemini_devils_advocate
+    {
+        name: TOOL_NAMES.DEVILS_ADVOCATE,
+        description: "Devil's Advocate Power - Find problems, risks, and gaps in proposals. ONLY criticizes, NEVER proposes solutions or alternatives. Perfect for cross-validation and catching blind spots before implementation.",
+        inputSchema: {
+            type: 'object',
+            properties: {
+                proposal: {
+                    type: 'string',
+                    description: 'The proposal or plan to critique (recommended: 15-30 lines summary)'
+                },
+                proposalPaths: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'Optional: File paths containing proposal details (e.g., ["./specs/design.md"])'
+                },
+                goal: {
+                    type: 'string',
+                    description: 'Optional: The stated goal of the proposal'
+                },
+                constraints: {
+                    type: 'string',
+                    description: 'Optional: Known constraints or requirements'
+                },
+                maxOutputTokens: {
+                    type: 'number',
+                    description: 'Token budget for output (default: 600, range: 200-1500)',
+                    default: 600
+                }
+            },
+            required: ['proposal']
+        }
+    },
+    // ✅ Tool 12: gemini_consistency_check
+    {
+        name: TOOL_NAMES.CONSISTENCY_CHECK,
+        description: 'Consistency Check Power - Verify if proposal aligns with goals, constraints, and acceptance criteria. Reports conflicts and gaps, NEVER suggests fixes. Essential for catching drift before PR/deployment.',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                goal: {
+                    type: 'string',
+                    description: 'The target goal or objective'
+                },
+                constraints: {
+                    type: 'string',
+                    description: 'Optional: Constraints and limitations'
+                },
+                proposal: {
+                    type: 'string',
+                    description: 'The current proposal or implementation summary'
+                },
+                acceptanceCriteria: {
+                    type: 'string',
+                    description: 'Optional: Acceptance criteria or success metrics'
+                },
+                proposalPaths: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'Optional: File paths containing proposal details'
+                },
+                maxOutputTokens: {
+                    type: 'number',
+                    description: 'Token budget for output (default: 500, range: 200-1200)',
+                    default: 500
+                }
+            },
+            required: ['goal', 'proposal']
+        }
     }
 ];
 //# sourceMappingURL=definitions.js.map
