@@ -32,12 +32,10 @@ export async function handleSearch(params, apiKey) {
         const config = {
             tools,
         };
-        // Add thinking config if not NONE
-        if (thinkingLevel !== 'NONE') {
-            config.thinkingConfig = {
-                thinkingLevel,
-            };
-        }
+        // Add thinking config
+        config.thinkingConfig = {
+            thinkingLevel,
+        };
         // Build prompt
         let prompt = params.query;
         if (params.context) {
