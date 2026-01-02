@@ -2,7 +2,7 @@
   "mcpServers": {
     "gemini-assistant": {
       "command": "npx",
-      "args": ["-y", "github:LeonSGP43/kiro_Gemini_Power"],
+      "args": ["-y", "github:LeonSGP43/Gemini-mcp#leon"],
       "env": {
         "GEMINI_API_KEY": "GEMINI_API_KEY"
       },
