@@ -22,5 +22,7 @@ Thumbs.db
 .claude/
 MCP-PRD.md
 
-# Kiro configuration
-.kiro/
+# Kiro configuration (except powers)
+.kiro/settings/
+.kiro/specs/
+.kiro/steering/
