@@ -119,10 +119,38 @@ Use gemini_consistency_check before PR:
 - Lower `maxOutputTokens` for quick checks (200-400)
 - Higher for comprehensive analysis (800-1500)
 
+## Configuration
+
+### Setting Up Your API Key
+
+This power requires a Google AI API key. **The key is NOT stored in the power repository** - you need to set it in your environment.
+
+**Option 1: Environment Variable (Recommended)**
+```bash
+# Add to your shell profile (~/.zshrc, ~/.bashrc, etc.)
+export GEMINI_API_KEY="your-actual-api-key-here"
+```
+
+**Option 2: User-level MCP Config**
+Edit `~/.kiro/settings/mcp.json` and add your key:
+```json
+{
+  "mcpServers": {
+    "gemini-assistant": {
+      "env": {
+        "GEMINI_API_KEY": "your-actual-api-key-here"
+      }
+    }
+  }
+}
+```
+
+Get your API key from: https://aistudio.google.com/apikey
+
 ## Troubleshooting
 
 ### "API key not set"
-Ensure `GEMINI_API_KEY` is set in your environment or mcp.json config.
+The `GEMINI_API_KEY` environment variable is not configured. See the Configuration section above.
 
 ### Output too long
 Reduce `maxOutputTokens` parameter. Controlled tools respect this strictly.
